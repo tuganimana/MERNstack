@@ -4,6 +4,8 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
+const randomString = require('random-string');
+const nodemailer = require("nodemailer");
  router.post('/signup',(req,res,next)=>{
    
     //   adding models
@@ -24,20 +26,43 @@ User.find({username:req.body.username})
                     
                 })
               }else{
+
+                var xnumber = randomString({
+                    length: 6,
+                    numeric: true,
+                    letters: true,
+                    special: false,
+                    
+                    });
                   const users = new User({
                       _id: new mongoose.Types.ObjectId(),
                       firstname:req.body.firstname,
                 lastname:req.body.lastname,
                 username:req.body.username,
                 telephone:req.body.telephone,
-                password:hash
+                password:hash,
+                verifycode:xnumber,
                 
             
         });
         users.save().then(result =>{
+            let transport = nodemailer.createTransport({
+                // ...
+            });
+            const message = {
+                from: 'telepshore@idatech.rw',
+                to: 'tuganimana01@gmail.com',
+                subject: 'Account verification code | Tesla',
+                html: '<h1>Your verification code is</h1><p> <b>'+xnumber+'</b>.  verify your accoun now</p>'
+            };
+            transport.sendMail(message, function (err, info) {
+                // ...
+             });
+
           console.log(result)
           res.status(201).json({
              message:'successful created',
+
             
          })
       }).catch(err=>{
@@ -125,7 +150,7 @@ User.find({username:req.body.username})
      })
  });
 
- router.patch('/:postId',(req,res,next)=>{
+ router.patch('/update',(req,res,next)=>{
     
      const id = req.params.postId;
     //  kwa updating  - dukoresheje variable set  inzira yambere
@@ -148,13 +173,42 @@ User.find({username:req.body.username})
             })
         }
     )
-    // ==================================nkore ops ya updating byose
-// const updateOps ={};
-// for(const ops of req.body){
-//     updateOps[ops.propName] =ops.value;
-// }
-//  Post.update({_id:id},{$set:updateOps}).exec()
-
+  
 
  })
+
+
+//  ku verifying
+
+router.put('/',(req,res,next)=>{
+    res.status(200).json({
+        message:'well done PUT'
+    })
+});
+
+router.patch('/verification',(req,res,next)=>{
+   
+    const id = req.params.postId;
+   //  kwa updating  - dukoresheje variable set  inzira yambere
+
+   User.find({})
+     Post.update({_id:id},{$set:{
+        
+        verification:req.body.page
+     }}) .then(result=>{
+       res.status(200).json({
+           message:"successful updated",
+           result:result
+       })
+   })
+   .catch(
+       err=>{
+           res.status(500).json({
+               error:err,
+           })
+       }
+   )
+ 
+
+})
 module.exports = router;

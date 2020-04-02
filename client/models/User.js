@@ -12,5 +12,6 @@ const  userSchema =mongoose.Schema({
   match:/[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/},
    password:{type:String,required:true}, 
    verification:{type:String, default:'no'},
+   verifycode:{type:String,}
  });
  module.exports = mongoose.model('user',userSchema);
