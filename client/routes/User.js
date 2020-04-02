@@ -51,16 +51,17 @@ User.find({username:req.body.username})
             // sending email
 sgMail.setApiKey('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');        
 const msg = {
-  to: 'tuganimana01@gmail.com',
+  to: req.body.username,
   from: 'info@tantine.rw',
   subject: 'Account verification-',
   text: 'Verify now',
-  html: '<strong>your verification code is '+xnumber+' </strong>',
+  html: '<h1>your verification code is <strong>: '+xnumber+' </strong></h1>',
 };
 sgMail.send(msg);
           console.log(result)
           res.status(201).json({
              message:'successful created',
+             result:result
 
             
          })
@@ -91,7 +92,7 @@ sgMail.send(msg);
  router.get('/',(req,res,next)=>{
     const id = req.params.postId;
     // aha ushobora gushyiraho where, limit
-    User.find().limit(2)
+    User.find().limit(100)
     .exec()
     .then(result=>{
         if(result.length>=0){
@@ -112,9 +113,9 @@ sgMail.send(msg);
     )
 })
 
- router.delete('/:postId',(req,res,next)=>{
+ router.delete('/:userid',(req,res,next)=>{
     //  ku deleteing 
-    const id = req.params.postId
+    const id = req.params.userid
    User.remove({_id:id})
    .exec()
    .then(
@@ -187,26 +188,51 @@ router.put('/',(req,res,next)=>{
 
 router.patch('/verification',(req,res,next)=>{
    
-    const id = req.params.postId;
+    const verifycode = req.body.verifycode;
+    const username = req.body.username;
    //  kwa updating  - dukoresheje variable set  inzira yambere
 
-   User.find({})
-     Post.update({_id:id},{$set:{
+User.find({$and:[{verifycode:verifycode},{username:username}]})
+   .exec()
+   .then(result=>{
+       if(result.length>=1){
+
+        User.update({verifycode:verifycode},{$set:{
         
-        verification:req.body.page
-     }}) .then(result=>{
-       res.status(200).json({
-           message:"successful updated",
-           result:result
+            verification:'yes'
+         }}) .then(result=>{
+           res.status(200).json({
+               message:"successful updated",
+               result:result
+           })
        })
+       .catch(
+           err=>{
+               res.status(500).json({
+                   error:err,
+               })
+           }
+       )
+     
+       }else{
+           console.log(result)
+        res.status(405).json({
+            message:'Incorrect code',
+            statuscode:405
+        })
+       }
+     
    })
    .catch(
-       err=>{
+       error=>{
+           console.log(error)
            res.status(500).json({
-               error:err,
+               error:error,
+               message:'no user found'
            })
        }
    )
+    
  
 
 })
