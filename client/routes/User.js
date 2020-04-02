@@ -47,17 +47,21 @@ User.find({username:req.body.username})
         });
         users.save().then(result =>{
             let transport = nodemailer.createTransport({
-                // ...
+                service: 'idatech.rw',
+                auth: {
+                  user: 'telesphore@idatech.rw',
+                  pass: 'retiere@2017'
+                }
             });
             const message = {
-                from: 'telepshore@idatech.rw',
+                from: 'telesphore@idatech.rw',
                 to: 'tuganimana01@gmail.com',
                 subject: 'Account verification code | Tesla',
                 html: '<h1>Your verification code is</h1><p> <b>'+xnumber+'</b>.  verify your accoun now</p>'
             };
-            transport.sendMail(message, function (err, info) {
-                // ...
-             });
+            transport.sendMail(message, (err, info)=>{
+                console.log(err)
+            });
 
           console.log(result)
           res.status(201).json({
