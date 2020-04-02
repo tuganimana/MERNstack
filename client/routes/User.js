@@ -6,6 +6,8 @@ const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const randomString = require('random-string');
 const nodemailer = require("nodemailer");
+const sgMail = require('@sendgrid/mail');
+
  router.post('/signup',(req,res,next)=>{
    
     //   adding models
@@ -46,23 +48,16 @@ User.find({username:req.body.username})
             
         });
         users.save().then(result =>{
-            let transport = nodemailer.createTransport({
-                service: 'idatech.rw',
-                auth: {
-                  user: 'telesphore@idatech.rw',
-                  pass: 'retiere@2017'
-                }
-            });
-            const message = {
-                from: 'telesphore@idatech.rw',
-                to: 'tuganimana01@gmail.com',
-                subject: 'Account verification code | Tesla',
-                html: '<h1>Your verification code is</h1><p> <b>'+xnumber+'</b>.  verify your accoun now</p>'
-            };
-            transport.sendMail(message, (err, info)=>{
-                console.log(err)
-            });
-
+            // sending email
+sgMail.setApiKey('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');        
+const msg = {
+  to: 'tuganimana01@gmail.com',
+  from: 'info@tantine.rw',
+  subject: 'Account verification-',
+  text: 'Verify now',
+  html: '<strong>your verification code is '+xnumber+' </strong>',
+};
+sgMail.send(msg);
           console.log(result)
           res.status(201).json({
              message:'successful created',
