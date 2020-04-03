@@ -7,6 +7,7 @@ const bcrypt = require('bcrypt');
 const randomString = require('random-string');
 const nodemailer = require("nodemailer");
 const sgMail = require('@sendgrid/mail');
+const jwt =require('jsonwebtoken');
 
  router.post('/signup',(req,res,next)=>{
    
@@ -89,6 +90,72 @@ sgMail.send(msg);
     
  });
 
+//  login ahanganaha 
+
+router.post('/login',(req,res,next)=>{
+
+
+    User.find({username:req.body.username}).exec()
+    .then(
+        result=>{
+            console.log(result)
+
+            if(result.length<1){
+                return  res.status(401).json({
+                    message:'Auth failed'
+                })
+            }
+
+            bcrypt.compare(req.body.password, result[0].password,(error,response)=>{
+                if(error){
+                    return  res.status(401).json({
+                        message:'Auth failed'
+                    }) 
+                }
+
+                if(response===true &&result[0].verification==='no'){
+                    // =======token
+                 const token = jwt.sign({
+                        username:result[0].username,
+                        userId:result[0]._id
+
+                    },
+                    'chance',{
+                       expiresIn: "1h"
+                    }
+
+                    )
+
+                    // =====end ya token 
+                    return  res.status(200).json({
+                        message:'Auth success',
+                        token:token
+                    }) 
+                }else{
+                    console.log(result)
+                    return  res.status(205).json({
+                        message:'your account is not verified'
+                    }) 
+                }
+
+                return  res.status(401).json({
+                    message:'Auth failed'
+                }) 
+
+            })
+        }
+    )
+    .catch(err=>{
+        res.status(500).json({
+            error:err,
+           
+        })
+     })
+})
+
+
+
+// ======================================================GET all users================
  router.get('/',(req,res,next)=>{
     const id = req.params.postId;
     // aha ushobora gushyiraho where, limit
