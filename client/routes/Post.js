@@ -10,7 +10,7 @@ const storage =multer.diskStorage({
         cb(null, './uploads');
     },
     filename:function(req,file,cb){
-        cb(null,new Date().toISOString()+file.originalname);
+        cb(null,new Date().toISOString().replace(/:/g, '-')+file.originalname);
     }
 
 })
@@ -26,7 +26,7 @@ const upload =multer({storage:storage});
          _id: new mongoose.Types.ObjectId(),
          title :req.body.title,
    content:req.body.content,
-   pictures:req.body.pictures,
+   pictures:req.file.path,
    user:req.body.user,
    page:req.body.page,
 
