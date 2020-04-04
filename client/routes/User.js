@@ -8,7 +8,7 @@ const randomString = require('random-string');
 const nodemailer = require("nodemailer");
 const sgMail = require('@sendgrid/mail');
 const jwt =require('jsonwebtoken');
-
+const checkAuth= require('../midleware/check-auth')
  router.post('/signup',(req,res,next)=>{
    
     //   adding models
@@ -113,7 +113,7 @@ router.post('/login',(req,res,next)=>{
                     }) 
                 }
 
-                if(response===true &&result[0].verification==='no'){
+                if(response ===true &&result[0].verification==='no'){
                     // =======token
                  const token = jwt.sign({
                         username:result[0].username,
@@ -132,7 +132,7 @@ router.post('/login',(req,res,next)=>{
                         token:token
                     }) 
                 }else{
-                    console.log(result)
+                    console.log(response.status)
                     return  res.status(205).json({
                         message:'your account is not verified'
                     }) 
@@ -180,7 +180,7 @@ router.post('/login',(req,res,next)=>{
     )
 })
 
- router.delete('/:userid',(req,res,next)=>{
+ router.delete('/:userid',checkAuth,(req,res,next)=>{
     //  ku deleteing 
     const id = req.params.userid
    User.remove({_id:id})
@@ -217,7 +217,7 @@ router.post('/login',(req,res,next)=>{
      })
  });
 
- router.patch('/update',(req,res,next)=>{
+ router.patch('/update',checkAuth,(req,res,next)=>{
     
      const id = req.params.postId;
     //  kwa updating  - dukoresheje variable set  inzira yambere

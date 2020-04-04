@@ -4,7 +4,7 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const Post = require('../models/Post');
 const multer = require('multer');
-
+const checkAuth= require('../midleware/check-auth')
 const storage =multer.diskStorage({
     destination:function(req,file,cb){
         cb(null, './uploads');
@@ -15,7 +15,7 @@ const storage =multer.diskStorage({
 
 })
 const upload =multer({storage:storage});
- router.post('/',upload.single('pictures'),(req,res,next)=>{
+ router.post('/',checkAuth,upload.single('pictures'),(req,res,next)=>{
      console.log(req.file)
       const post={
           name:req.body.name,
@@ -92,7 +92,7 @@ const upload =multer({storage:storage});
     )
 })
 
- router.delete('/:postId',(req,res,next)=>{
+ router.delete('/:postId',checkAuth,(req,res,next)=>{
     //  ku deleteing 
     const id = req.params.postId
    Post.remove({_id:id})
@@ -123,13 +123,8 @@ const upload =multer({storage:storage});
          message:'well done DELET'
      })
  });
- router.put('/',(req,res,next)=>{
-     res.status(200).json({
-         message:'well done PUT'
-     })
- });
 
- router.patch('/:postId',(req,res,next)=>{
+ router.patch('/:postId',checkAuth,(req,res,next)=>{
     
      const id = req.params.postId;
     //  kwa updating  - dukoresheje variable set  inzira yamberekk

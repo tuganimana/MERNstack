@@ -48,6 +48,7 @@ app.use((req,res,next)=>{
 app.use('/api/post',postRoutes);
 app.use('/api/comment', commentRoutes);
 app.use('/user',userRoutes);
+app.use(express.static('uploads'))
 // error igihe ntakintu kibaye 
 
 app.use((req,res,next)=>{
