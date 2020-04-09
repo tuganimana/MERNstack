@@ -63,7 +63,7 @@ exports.get_somepost=(req,res,next)=>{
 exports.get_allpost=(req,res,next)=>{
     const id = req.params.postId;
     // aha ushobora gushyiraho where, limit
-    Post.find().limit(2)
+    Post.find().limit(10)
     .exec()
     .then(result=>{
         if(result.length>=0){
