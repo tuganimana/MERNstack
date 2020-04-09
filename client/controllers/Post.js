@@ -36,8 +36,8 @@ exports.create_post =(req,res,next)=>{
 // get post
 
 exports.get_somepost=(req,res,next)=>{
-    const id = req.params.postId;
-    Post.findById(id)
+    const title = req.params.postId;
+    Post.find({title:title}).limit(1).sort({id:-1})
     .exec()
     .then(result=>{
         if(result){
@@ -63,7 +63,7 @@ exports.get_somepost=(req,res,next)=>{
 exports.get_allpost=(req,res,next)=>{
     const id = req.params.postId;
     // aha ushobora gushyiraho where, limit
-    Post.find().limit(10)
+    Post.find().limit(10).sort({_id:-1})
     .exec()
     .then(result=>{
         if(result.length>=0){
