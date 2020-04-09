@@ -2,11 +2,11 @@ const mongoose = require('mongoose');
 const Post = require('../models/Post');
 // gukora post
 exports.create_post =(req,res,next)=>{
-    console.log(req.file)
-     const post={
-         name:req.body.name,
-         description: req.body.description
-     };
+  
+    if (! req.file || ! req.file.path) {
+        console.log(req.file)
+        return res.status(408);
+      }
    //   adding models
     const posts = new Post({
         _id: new mongoose.Types.ObjectId(),
@@ -15,6 +15,7 @@ exports.create_post =(req,res,next)=>{
   pictures:req.file.path,
   user:req.body.user,
   page:req.body.page,
+  addedon:new Date()
 
     })
     posts.save().then(result =>{
@@ -25,6 +26,7 @@ exports.create_post =(req,res,next)=>{
        })
     }).catch(err=>{
         console.log(err);
+        
         res.status(500).json({
            error:err
        })
