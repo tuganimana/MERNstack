@@ -9,6 +9,7 @@ const app = express();
 const morgan = require('morgan');
 const bodyParser =require('body-parser')
 const mongoose =require('mongoose')
+const twilio = require('twilio');
 // const dbconnect = require('./db.js')
 // connection to mongo mu
 
@@ -23,8 +24,12 @@ console.log(err);
 mongoose.Promise =global.Promise;
 // const io = socketio(server);
 const postRoutes =require('./client/routes/Post');
-const commentRoutes =require('./client/routes/Comment');
+
 const userRoutes = require('./client/routes/User');
+const domainsRoutes= require('./client/routes/Domains');
+const callRoutes =require('./client/routes/Twiliocall');
+const twmlRoutes =require('./client/routes/Twiml')
+
 // bishyire kuri incoming
 app.use(morgan('dev'))
 app.use(bodyParser.urlencoded({
@@ -46,8 +51,11 @@ app.use((req,res,next)=>{
 
 // shyira ama routes yawe hano 
 app.use('/api/post',postRoutes);
-app.use('/api/comment', commentRoutes);
+
 app.use('/user',userRoutes);
+app.use('/api/domains',domainsRoutes);
+app.use('/api/twillio',callRoutes);
+app.use('/api/twiml',twmlRoutes);
 app.use(express.static('uploads'))
 // error igihe ntakintu kibaye 
 

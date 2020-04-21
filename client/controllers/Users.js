@@ -42,6 +42,7 @@ User.find({username:req.body.username})
                 telephone:req.body.telephone,
                 password:hash,
                 verifycode:xnumber,
+                usertype:req.body.usertype
                 
             
         });
@@ -50,7 +51,7 @@ User.find({username:req.body.username})
 sgMail.setApiKey('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');        
 const msg = {
   to: req.body.username,
-  from: 'info@tantine.rw',
+  from: 'info@idatech.rw',
   subject: 'Account verification-',
   text: 'Verify now',
   html: '<h1>your verification code is <strong>: '+xnumber+' </strong></h1>',
